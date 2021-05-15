@@ -1,4 +1,5 @@
-from random import randint, uniform
+from random import randint, uniform, sample
+import random
 
 
 def template_co(p1, p2):
@@ -45,11 +46,18 @@ def cycle_co(p1, p2):
         val1 = p1[index]
         val2 = p2[index]
 
+        i = 0
         while val1 != val2:
             offspring1[index] = p1[index]
             offspring2[index] = p2[index]
             val2 = p2[index]
-            index = p1.index(val2)
+            try:
+                index = p1.index(val2)
+            except:
+                index = index
+            i += 1
+            if i > 10000:
+                break
         # In case last values share the same index, fill them in each offspring
         offspring1[index] = p1[index]
         offspring2[index] = p2[index]
@@ -64,14 +72,67 @@ def arithmetic_co(p1, p2):
     alpha = uniform(0,1)
     # Take weighted sum of two parents, invert alpha for second offspring
     for i in range(len(p1)):
-        offspring1[i] = p1[i] * alpha + (1 - alpha) * p2[i]
-        offspring2[i] = p2[i] * alpha + (1 - alpha) * p1[i]
+        offspring1[i] = int(p1[i] * alpha + (1 - alpha) * p2[i])
+        offspring2[i] = int(p2[i] * alpha + (1 - alpha) * p1[i])
 
     return offspring1, offspring2
-    
+
+def pmx_co(p1, p2):
+    # Sample 2 random co points
+    co_points = sample(range(len(p1)), 2)
+    co_points.sort()
+
+    def PMX(x, y):
+        # Create placeholder for offspring
+        o = [None] * len(x)
+
+        # Copy co segment into offspring
+        o[co_points[0]:co_points[1]] = x[co_points[0]:co_points[1]]
+
+        # Find set of values not in offspring from co segment in P2
+        z = set(y[co_points[0]:co_points[1]]) - set(x[co_points[0]:co_points[1]])
+
+        # Map values in set to corresponding position in offspring
+        for i in z:
+            temp = i
+            try:
+                index = y.index(x[y.index(temp)])
+            except:
+                try:
+                    index = index
+                except:
+                    index = random.randint(0,20)
+            j = 0
+            while o[index] != None:
+                temp = index
+                try:
+                    index = y.index(x[temp])
+                except:
+                    try:
+                        index = index
+                    except:
+                        index = random.randint(0,20)
+                j += 1
+                if j > 10000:
+                    break
+            o[index] = i
+        # Fill in remaining values
+        while None in o:
+            index = o.index(None)
+            o[index] = y[index]
+        return o
+
+    # Call function twice with parents reversed
+    o1, o2 = (
+        PMX(p1, p2),
+        PMX(p2, p1)
+    )
+
+    return o1, o2
+
 
 if __name__ == '__main__':
-    p1 = [0.1,0.2,0.6,0.4,0.3,0.5,0.7]
-    p2 = [0.7,0.5,0.2,0.3,0.6,0.4,0.1]
+    p1 = [1,2,3,4,5,6,7,8,9]
+    p2 = [9,3,7,8,2,6,5,1,4]
 
-    print(arithmetic_co(p1, p2))
+    print(pmx_co(p1, p2))

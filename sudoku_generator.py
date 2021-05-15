@@ -25,11 +25,11 @@ def create_sudoku(difficulty):
     
     #define the number of fields to keep according to the given difficulty
     if difficulty == "easy":
-        to_delete = random.randint(49,53)
+        to_delete = 51
     elif difficulty == "medium":
-        to_delete = random.randint(54,58)
+        to_delete = 56
     elif difficulty == "hard":
-        to_delete = random.randint(59,62)
+        to_delete = 61
     else:
         raise Exception("You must specify the difficulty as 'easy', 'medium' or 'hard'!")
     

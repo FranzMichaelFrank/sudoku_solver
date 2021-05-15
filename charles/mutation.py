@@ -1,4 +1,5 @@
 from random import randint, sample
+import random
 
 def template_mutation(individual):
     """[summary]
@@ -37,6 +38,31 @@ def binary_mutation(individual):
 
     return individual
 
+def distinct_mutation(individual):
+    mut_point = randint(0, len(individual) - 1)
+
+    close_points_and_self = []
+
+    try:
+        for i in [mut_point-2, mut_point-1, mut_point, mut_point+1, mut_point+2]:
+            close_points_and_self.append(individual[i])
+    except:
+        pass
+    
+    change_partner = randint(0, len(individual) - 1)
+    new_value = individual[change_partner]
+
+    if new_value not in close_points_and_self:
+        individual[change_partner] = individual[mut_point]
+    else:
+        while new_value in close_points_and_self:
+            change_partner = randint(0, len(individual) - 1)
+            new_value = individual[change_partner]
+        individual[change_partner] = individual[mut_point]
+
+    individual[mut_point] = new_value
+
+    return individual
 
 def swap_mutation(individual):
     # Get two mutation points

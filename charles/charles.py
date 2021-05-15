@@ -1,25 +1,21 @@
 from random import shuffle, choice, sample, random
 from operator import  attrgetter
-from copy import deepcopy
 
+from copy import deepcopy
+import csv
+import time
 
 class Individual:
     def __init__(
         self,
+        representation,
         initial_sudoku,
-        representation=None,
-        size=None,
         replacement=True,
-        valid_set=[i for i in range(13)],
+        valid_set=[i for i in range(1,10)],
     ):
-        if representation == None:
-            if replacement == True:
-                self.representation = [choice(valid_set) for i in range(size)]
-            elif replacement == False:
-                self.representation = sample(valid_set, size)
-        else:
-            self.representation = representation
-        self.fitness = self.evaluate(initial_sudoku=initial_sudoku)
+        self.representation = representation
+        self.initial_sudoku = initial_sudoku
+        self.fitness = self.evaluate(initial_sudoku=self.initial_sudoku)
 
     def evaluate(self):
         raise Exception("You need to monkey patch the fitness path.")
@@ -44,29 +40,18 @@ class Individual:
 
 
 class Population:
-    def __init__(self, size, optim, individuals, initial_sudoku, **kwargs):
+    def __init__(self, individuals, size, optim, initial_sudoku):
         self.initial_sudoku = initial_sudoku
         self.size = size
         self.optim = optim
+        self.gen = 1
+        self.timestamp = int(time.time())
+        self.individuals = []
 
-        if individuals == None:
-            self.individuals = []
-            for _ in range(size):
-                self.individuals.append(
-                    Individual(
-                        size=kwargs["sol_size"],
-                        replacement=kwargs["replacement"],
-                        valid_set=kwargs["valid_set"],
-                        initial_sudoku=self.initial_sudoku,
-                    )
-                )
-        else:
-            self.individuals = [Individual(representation=i, initial_sudoku=self.initial_sudoku) for i in individuals]
+        for i in individuals:
+            self.individuals.append(Individual(representation=i, initial_sudoku=self.initial_sudoku))
+        
 
-        
-        
-        
-        
     def evolve(self, gens, select, crossover, mutate, co_p, mu_p, elitism):
         for gen in range(gens):
             new_pop = []
@@ -81,9 +66,9 @@ class Population:
                 parent1, parent2 = select(self), select(self)
                 # Crossover
                 if random() < co_p:
-                    offspring1, offspring2 = crossover(parent1, parent2)
+                    offspring1, offspring2 = crossover(parent1.representation, parent2.representation)
                 else:
-                    offspring1, offspring2 = parent1, parent2
+                    offspring1, offspring2 = parent1.representation, parent2.representation
                 # Mutation
                 if random() < mu_p:
                     offspring1 = mutate(offspring1)
@@ -101,13 +86,17 @@ class Population:
                     least = max(new_pop, key=attrgetter("fitness"))
                 new_pop.pop(new_pop.index(least))
                 new_pop.append(elite)
- 
+
             self.individuals = new_pop
+            self.gen += 1
  
             if self.optim == "max":
                 print(f'Best Individual: {max(self, key=attrgetter("fitness"))}')
             elif self.optim == "min":
                 print(f'Best Individual: {min(self, key=attrgetter("fitness"))}')
+
+    
+
 
     def __len__(self):
         return len(self.individuals)
@@ -117,4 +106,3 @@ class Population:
 
     def __repr__(self):
         return f"Population(size={len(self.individuals)}, individual_size={len(self.individuals[0])})"
-

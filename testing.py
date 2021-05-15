@@ -10,6 +10,7 @@ import random
 from random import choices
 from random import sample
 from copy import deepcopy
+import pandas as pd
 
 
 def evaluate(sudoku, initial_sudoku):
@@ -70,40 +71,77 @@ def get_neighbours(self):
     Returns:
         list: a list of individuals
     """
-    n = [deepcopy(self.representation) for i in range(len(self.representation) - 1)]
-
-    for count, i in enumerate(n):
-        i[count], i[count + 1] = i[count + 1], i[count]
-
-    n = [Individual(i) for i in n]
-    return n
+    pass
 
 # Monkey patching
 Individual.evaluate = evaluate
 Individual.get_neighbours = get_neighbours
 
-# Initialize a sudoku and a population of random solutions for it
-pop_size = 100
-sudoku_and_population = initialize_population(pop_size,"easy")
+fitness_scores_easy = []
+fitness_scores_medium = []
+fitness_scores_hard = []
 
-pop = Population(
-    size=pop_size,
-    optim="max",
-    individuals=sudoku_and_population["population"],
-    initial_sudoku=sudoku_and_population["sudoku"],
-    #**kwargs
-    #dynamic length of solution
-)
+for i in range(75):
 
-pop.evolve(
-    gens=100,
-    select=rank, #works for all three
-    crossover=single_point_co, #works only for single_point_co, cycle_co, single_point_co, pmx_co
-    mutate=distinct_mutation, #works for both
-    co_p=0.7,
-    mu_p=0.2,
-    elitism=True
-)
+    # Initialize a sudoku and a population of random solutions for it
+    pop_size = 500
+
+    if i < 25:
+        sudoku_and_population = initialize_population(pop_size,"easy")
+    elif i < 50:
+        sudoku_and_population = initialize_population(pop_size,"medium")
+    else:
+        sudoku_and_population = initialize_population(pop_size,"hard")
+
+    pop = Population(
+        size=pop_size,
+        optim="max",
+        individuals=sudoku_and_population["population"],
+        initial_sudoku=sudoku_and_population["sudoku"]
+        #**kwargs
+        #valid_set=[i for i in range(1,10)]
+        #replacement=True
+        #dynamic length of solution
+    )
+
+    pop.evolve(
+        gens=100,
 
 
-display_sudoku(pop[0], sudoku_and_population["sudoku"])
+        #FILIPE: change the following three parameters accordingly
+        select=rank, #fps #tournament #rank
+        crossover=pmx_co, #single_point_co #cycle_co #pmx_co 
+        mutate=distinct_mutation, #inversion_mutation #swap_mutation #distinct_mutation
+
+
+        co_p=0.7,
+        mu_p=0.2,
+        elitism=True
+    )
+
+    max_fitness = 0
+    max_position = 0
+
+    for j in range(50):
+        if pop[j].fitness > max_fitness:
+            max_position = j
+            max_fitness = pop[j].fitness
+
+    if i < 25:
+        fitness_scores_easy.append(max_fitness)
+    elif i < 50:
+        fitness_scores_medium.append(max_fitness)
+    else:
+        fitness_scores_hard.append(max_fitness)
+
+results = pd.DataFrame([fitness_scores_easy,fitness_scores_medium,fitness_scores_hard], index=["easy", "medium", "hard"], columns = ["R_" + str(i+1) for i in range(25)])
+results["Average_Fitness"] = results.T.mean()
+
+
+#FILIPE: change name of csv file (select__crossover__mutate.csv)
+results.to_csv("test.csv")
+
+
+
+
+
