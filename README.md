@@ -4,3 +4,7 @@ Group project at NOVA IMS, Lisbon, 2021. Master's degree in Data Science and Adv
 
 The goal of this project is to develop a genetic algorithm that generates good solutions for a Sudoku puzzle, ideally solving the puzzle completely!
 
+Contributers:
+* Franz Michael Frank
+* Filipe Coelho
+
