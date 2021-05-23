@@ -6,7 +6,7 @@ The goal of this project is to develop a genetic algorithm that generates good s
 
 Note: In order to test the final genetic algorithm, download the repository and simply run the main.py file. The result will be a display of an unsolved Sudoku puzzle and its corresponding generated solution :)
 
-Contributers:
+Contributors:
 * Franz Michael Frank
 * Filipe Coelho
 
