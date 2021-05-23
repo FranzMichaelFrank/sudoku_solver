@@ -4,7 +4,17 @@ import random
 from random import sample
 
 def initialize_population(size, difficulty):
-    """This function initializes a populattion of given size for randomly filled sudoku puzzles with given difficulty!"""
+    """This function initializes a populattion of given size for randomly filled sudoku puzzles with given difficulty!
+
+    Args:
+        size (int): size of the population (=number of created solutions for one single Sudoku puzzle)
+        difficulty (["easy", "medium", "hard"]): level of difficulty of the Sudoku puzzle
+
+    Returns:
+        {"population":population, "sudoku":sudoku}: a dictionary: the first key "population" corresponds to a value of a list
+        containing the population instances as lists; the second key "sudoku" corresponds to a value of a single list containing
+        the unsolved Sudoku puzzle
+    """
     
     #generate the puzzle which will be filled with random values "size" times
     sudoku = create_sudoku(difficulty)

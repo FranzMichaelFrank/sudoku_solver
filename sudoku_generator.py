@@ -3,7 +3,16 @@ from random import sample
 
 def create_sudoku(difficulty):
     """This function creates a sudoku puzzle for a given difficulty. The difficulty has to be expressed as a string and can either
-    be "easy", "medium" or "hard"."""
+    be "easy", "medium" or "hard".
+    
+    Args:
+        difficulty (["easy", "medium", "hard"]): level of difficulty of the Sudoku puzzle
+
+    Returns:
+        {"population":population, "sudoku":sudoku}: a dictionary: the first key "population" corresponds to a value of a list
+        containing the population instances as lists; the second key "sudoku" corresponds to a value of a single list containing
+        the unsolved Sudoku puzzle
+    """
     
     def maths(row,col):
         """This function returns a number between 0 and 8, depending on the numbers it is given"""
@@ -42,8 +51,22 @@ def create_sudoku(difficulty):
 
 
 def display_sudoku(sudoku, initial_sudoku=None):
-    """This function displays a sudoku puzzle in a pretty way!"""
+    """This function displays a sudoku puzzle in a pretty way!
     
+    Args:
+        if initial_sudoku is None:
+            sudoku: a list that corresponds to an unsolved Sudoku puzzle
+        if initial_sudoku is specified:
+            sudoku: a list that corresponds to a solution for a Sudoku puzzle
+            initial_sudoku: a list that corresponds to an unsolved Sudoku puzzle for which "sudoku" is the solution
+
+
+    Returns:
+        This function does not contain a return statement. It is only useful to simply print out a Sudoku puzzle in
+        the usual way it can also be found in newspapers etc.
+    """
+    
+    #build the sudoku matrix either with empty fields for values of 0 if it is unsolved, or by merging the solution with the unsolved puzzle
     if initial_sudoku == None:
         sudoku_matrix = [sudoku[i:i+9] for i in range(0,len(sudoku),9)]
     else:
@@ -58,8 +81,13 @@ def display_sudoku(sudoku, initial_sudoku=None):
         sudoku_matrix = [sud_full[i:i+9] for i in range(0,len(sud_full),9)]
         
     
+    
     def expandLine(line):
+        """This function expands lines of Sudoku puzzles up to a length of 9 "fields" (that does NOT correspond to a string of length 9). """
         return line[0]+line[5:9].join([line[1:5]*(3-1)]*3)+line[9:13]
+
+
+    #print the sudoku matrix line by line, with vertical and horizontal dashes marking the boundaries of rows, columns and blocks
 
     line0  = expandLine("╔═══╤═══╦═══╗")
     line1  = expandLine("║ . │ . ║ . ║")
