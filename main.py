@@ -67,12 +67,14 @@ def evaluate(sudoku, initial_sudoku):
 def get_neighbours(self):
     pass
 
-# Monkey patching
+#monkey patching
 Individual.evaluate = evaluate
 Individual.get_neighbours = get_neighbours
 
-# Initialize a sudoku and a population of random solutions for it
+#initialize a Sudoku and a population of random solutions for it
+
 pop_size = 200000
+#the difficulty can be set in the following line
 sudoku_and_population = initialize_population(pop_size,"easy")
 
 pop = Population(
