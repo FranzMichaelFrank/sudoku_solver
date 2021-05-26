@@ -39,6 +39,18 @@ def binary_mutation(individual):
     return individual
 
 def distinct_mutation(individual):
+    """This function mutates an individual by randomly choosing a mutation point and subsequently exchanging its value 
+        with that of another random point. This happens under the condition that the new value with which the initially 
+        selected value is exchanged is neither the same as the initial one nor as the four nearest neighbors, which are the 2 
+        values before and after, of the initial one.
+
+    Args:
+        individual (Individual): A GA individual from charles libray.py
+
+    Returns:
+        Individual: Mutated Individual
+    """
+        
     mut_point = randint(0, len(individual) - 1)
 
     close_points_and_self = []
